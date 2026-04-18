@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Astro Oracle ✨ — ur cosmic bestie</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #07071a;
+      --surface:  #0e0e28;
+      --card:     #12122e;
+      --card2:    #16163a;
+      --border:   rgba(120,80,255,0.18);
+      --border2:  rgba(120,80,255,0.32);
+      --accent:   #a855f7;
+      --accent2:  #7c3aed;
+      --pink:     #ec4899;
+      --cyan:     #06b6d4;
+      --yellow:   #eab308;
+      --green:    #22c55e;
+      --orange:   #f97316;
+      --text:     #ede9fe;
+      --muted:    #7c6ea8;
+      --glow:     rgba(168,85,247,0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── STARS BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(120,40,200,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, rgba(30,80,200,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 50%, rgba(168,85,247,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    #stars {
+      position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+    }
+    .star {
+      position: absolute; border-radius: 50%;
+      background: #fff; opacity: 0;
+      animation: twinkle var(--d) var(--delay) infinite;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 0; transform: scale(0.5); }
+      50%      { opacity: var(--op); transform: scale(1); }
+    }
+
+    /* ── LAYOUT ── */
+    #app {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    /* ── HEADER ── */
+    header {
+      width: 100%;
+      padding: 18px 24px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(7,7,26,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { font-size: 1.6rem; }
+    .logo-text { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--accent); letter-spacing: 0.5px; }
+    .logo-sub  { font-size: 0.65rem; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; }
+
+    /* ── SCREENS ── */
+    .screen { width: 100%; max-width: 640px; padding: 32px 20px 60px; }
+    #screen-home   { display: flex; }
+    #screen-result { display: none; flex-direction: column; }
+
+    /* ── HERO ── */
+    .hero { text-align: center; margin-bottom: 40px; }
+    .hero-orb {
+      width: 110px; height: 110px; margin: 0 auto 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #c084fc, #7c3aed, #2e1065);
+      box-shadow: 0 0 60px rgba(168,85,247,0.5), 0 0 120px rgba(168,85,247,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem;
+      animation: pulse-orb 4s ease-in-out infinite;
+    }
+    @keyframes pulse-orb {
+      0%,100% { box-shadow: 0 0 60px rgba(168,85,247,0.5), 0 0 120px rgba(168,85,247,0.2); transform: scale(1); }
+      50%      { box-shadow: 0 0 80px rgba(168,85,247,0.7), 0 0 160px rgba(168,85,247,0.3); transform: scale(1.04); }
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 6vw, 2.8rem);
+      background: linear-gradient(135deg, #c084fc, #a855f7, #818cf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      line-height: 1.2; margin-bottom: 10px;
+    }
+    .hero p { font-size: 0.95rem; color: var(--muted); line-height: 1.6; max-width: 360px; margin: 0 auto; }
+
+    /* ── FORM CARD ── */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px 28px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 0 1px var(--border);
+    }
+
+    .form-heading { font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 20px; text-align: center; }
+
+    .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+    .field label { font-size: 0.72rem; font-weight: 600; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+    .optional { font-size: 0.65rem; background: rgba(168,85,247,0.15); color: var(--accent); padding: 2px 8px; border-radius: 8px; font-weight: 500; letter-spacing: 0; text-transform: none; }
+
+    .field input, .field select {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 16px;
+      color: var(--text);
+      font-size: 0.92rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      width: 100%;
+      -webkit-appearance: none;
+    }
+    .field input:focus, .field select:focus {
+      border-color: var(--accent);
+      background: rgba(168,85,247,0.07);
+      box-shadow: 0 0 0 3px rgba(168,85,247,0.12);
+    }
+    .field input::placeholder { color: rgba(124,110,168,0.6); }
+    .field input[type="date"]::-webkit-calendar-picker-indicator,
+    .field input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.5) sepia(1) hue-rotate(240deg); }
+    .field select option { background: #1a1040; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .cta-btn {
+      width: 100%; margin-top: 8px;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent), #c084fc);
+      border: none; border-radius: 16px;
+      color: #fff; font-size: 1rem; font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer; letter-spacing: 0.3px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px rgba(168,85,247,0.4);
+      position: relative; overflow: hidden;
+    }
+    .cta-btn::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(rgba(255,255,255,0.1), transparent);
+      pointer-events: none;
+    }
+    .cta-btn:hover  { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(168,85,247,0.55); }
+    .cta-btn:active { transform: translateY(0); }
+
+    .form-footer { text-align: center; font-size: 0.72rem; color: var(--muted); margin-top: 14px; }
+
+    /* ── RESULT SCREEN ── */
+
+    /* PROFILE BANNER */
+    .profile-banner {
+      background: linear-gradient(160deg, #0e0a30, #150d3a, #0a1530);
+      border: 1px solid var(--border2);
+      border-radius: 24px;
+      padding: 28px 24px;
+      text-align: center;
+      margin-bottom: 4px;
+      position: relative; overflow: hidden;
+    }
+    .profile-banner::before {
+      content: '';
+      position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+      width: 200px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(168,85,247,0.18), transparent 70%);
+      pointer-events: none;
+    }
+    .pb-emoji { font-size: 4rem; line-height: 1; margin-bottom: 8px; position: relative; z-index: 1; }
+    .pb-name  { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--accent); }
+    .pb-sign  { font-size: 0.8rem; color: var(--muted); margin: 4px 0 14px; }
+    .pb-tags  { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .ptag {
+      font-size: 0.7rem; font-weight: 600; padding: 5px 13px; border-radius: 20px;
+      border: 1px solid; letter-spacing: 0.3px;
+    }
+    .ptag.fire   { color: var(--orange); border-color: rgba(249,115,22,0.3); background: rgba(249,115,22,0.1); }
+    .ptag.earth  { color: var(--green);  border-color: rgba(34,197,94,0.3);  background: rgba(34,197,94,0.1);  }
+    .ptag.air    { color: var(--cyan);   border-color: rgba(6,182,212,0.3);  background: rgba(6,182,212,0.1);  }
+    .ptag.water  { color: #818cf8;       border-color: rgba(129,140,248,0.3);background: rgba(129,140,248,0.1);}
+    .ptag.planet { color: var(--accent); border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.1); }
+    .ptag.moon   { color: #c084fc;       border-color: rgba(192,132,252,0.3);background: rgba(192,132,252,0.1);}
+    .ptag.rising { color: var(--cyan);   border-color: rgba(6,182,212,0.3);  background: rgba(6,182,212,0.1);  }
+    .pb-vibe { font-size: 0.78rem; color: var(--muted); margin-top: 12px; font-style: italic; }
+
+    /* TABS */
+    .tabs-wrap {
+      position: sticky; top: 57px; z-index: 50;
+      background: rgba(7,7,26,0.9); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      margin: 0 -20px; padding: 0 20px;
+    }
+    .tabs { display: flex; overflow-x: auto; gap: 2px; padding: 6px 0; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex-shrink: 0; padding: 9px 16px; border-radius: 10px;
+      background: none; border: none;
+      color: var(--muted); cursor: pointer; font-size: 0.8rem; font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.2s, background 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .tab-btn.active { color: var(--accent); background: rgba(168,85,247,0.12); }
+
+    /* PANELS */
+    .panel { display: none; flex-direction: column; gap: 14px; padding-top: 20px; }
+    .panel.active { display: flex; }
+
+    /* CARDS */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      animation: fadeUp 0.4s ease forwards;
+    }
+    .card.glow { box-shadow: 0 0 30px var(--glow); border-color: var(--border2); }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card-label {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+
+    /* SCORE RING */
+    .score-section { display: flex; align-items: center; gap: 20px; }
+    .score-ring-wrap { flex-shrink: 0; position: relative; width: 80px; height: 80px; }
+    .score-ring-wrap svg { transform: rotate(-90deg); }
+    .score-ring-val {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-size: 1.3rem; font-weight: 800; color: var(--accent);
+      line-height: 1;
+    }
+    .score-ring-val span { font-size: 0.6rem; color: var(--muted); font-weight: 400; }
+
+    /* VIBE BARS */
+    .vbar-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
+    .vbar-label { font-size: 0.78rem; color: var(--muted); width: 80px; flex-shrink: 0; }
+    .vbar-track { flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden; }
+    .vbar-fill  { height: 100%; border-radius: 10px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+    .vbar-pct   { font-size: 0.72rem; color: var(--muted); width: 32px; text-align: right; }
+
+    /* BIG 3 */
+    .big3-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .big3-item {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 10px; text-align: center;
+    }
+    .big3-icon  { font-size: 1.6rem; margin-bottom: 4px; }
+    .big3-role  { font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
+    .big3-val   { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-top: 2px; }
+    .big3-desc  { font-size: 0.68rem; color: var(--muted); margin-top: 3px; line-height: 1.3; }
+
+    /* TRAITS */
+    .traits-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+    .trait-chip {
+      font-size: 0.75rem; font-weight: 600; padding: 5px 12px; border-radius: 20px;
+      background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.25); color: #c084fc;
+    }
+
+    /* PREDICTION BLOCKS */
+    .pred-block {
+      border-radius: 14px; padding: 14px 16px;
+      background: rgba(255,255,255,0.03);
+      border-left: 3px solid var(--accent);
+      margin-bottom: 2px;
+    }
+    .pred-block-label {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+    }
+    .pred-block p { font-size: 0.88rem; line-height: 1.65; color: var(--text); }
+
+    /* MONTH GRID */
+    .month-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+    @media(max-width:400px) { .month-grid { grid-template-columns: repeat(3,1fr); } }
+    .month-tile {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px 6px; text-align: center;
+      cursor: pointer; transition: border-color 0.2s, transform 0.15s, background 0.2s;
+    }
+    .month-tile:hover  { border-color: var(--border2); transform: translateY(-2px); }
+    .month-tile.active { border-color: var(--accent); background: rgba(168,85,247,0.1); }
+    .month-tile .mt-name  { font-size: 0.7rem; font-weight: 700; color: var(--muted); }
+    .month-tile .mt-emoji { font-size: 1.5rem; margin: 4px 0; }
+    .month-tile .mt-score { font-size: 0.65rem; font-weight: 700; color: var(--accent); }
+    .month-detail { margin-top: 2px; }
+
+    /* DAILY STATS */
+    .daily-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .stat-box {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 10px; text-align: center;
+    }
+    .stat-box .sb-label { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .stat-box .sb-val   { font-size: 1.4rem; font-weight: 800; }
+    .stat-box .sb-sub   { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+
+    /* MANTRA */
+    .mantra-card {
+      background: linear-gradient(135deg, rgba(168,85,247,0.15), rgba(99,102,241,0.1));
+      border: 1px solid var(--border2);
+      border-radius: 20px; padding: 22px;
+      text-align: center;
+    }
+    .mantra-card .mantra-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
+    .mantra-card .mantra-text  { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-style: italic; color: var(--pink); line-height: 1.5; }
+
+    /* CHAT */
+    .chat-wrap { display: flex; flex-direction: column; }
+    #chat-log {
+      height: 340px; overflow-y: auto; display: flex; flex-direction: column;
+      gap: 10px; padding: 4px 2px; margin-bottom: 12px;
+    }
+    #chat-log::-webkit-scrollbar { width: 4px; }
+    #chat-log::-webkit-scrollbar-track { background: transparent; }
+    #chat-log::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+    .cmsg { display: flex; gap: 8px; align-items: flex-end; }
+    .cmsg.user { flex-direction: row-reverse; }
+    .cmsg-av {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      background: var(--card2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+    }
+    .cmsg-bubble {
+      max-width: 82%; padding: 10px 14px; border-radius: 18px;
+      font-size: 0.87rem; line-height: 1.6;
+      animation: fadeUp 0.25s ease;
+    }
+    .cmsg.bot  .cmsg-bubble { background: var(--card2); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+    .cmsg.user .cmsg-bubble { background: rgba(99,102,241,0.25); border: 1px solid rgba(99,102,241,0.35); border-bottom-right-radius: 4px; }
+    .typing { display: flex; gap: 4px; padding: 4px 2px; }
+    .typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: bounce 1.2s infinite; }
+    .typing span:nth-child(2) { animation-delay: .2s; }
+    .typing span:nth-child(3) { animation-delay: .4s; }
+    @keyframes bounce { 0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)} }
+
+    .quick-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; }
+    .chip {
+      font-size: 0.73rem; font-weight: 500; padding: 6px 13px; border-radius: 20px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .chip:hover { border-color: var(--accent); color: var(--accent); background: rgba(168,85,247,0.08); }
+
+    .chat-input-row { display: flex; gap: 8px; }
+    .chat-input-row input {
+      flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      border-radius: 14px; padding: 11px 16px; color: var(--text);
+      font-size: 0.87rem; font-family: 'Inter', sans-serif; outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .chat-input-row input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(168,85,247,.1); }
+    .chat-input-row input::placeholder { color: rgba(124,110,168,.5); }
+    .send-btn {
+      width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border: none; cursor: pointer; font-size: 1rem; color: #fff;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 16px rgba(168,85,247,.35);
+    }
+    .send-btn:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(168,85,247,.5); }
+
+    /* RESET */
+    .reset-row { display: flex; justify-content: center; padding-top: 12px; }
+    .reset-btn {
+      background: none; border: 1px solid var(--border); border-radius: 10px;
+      color: var(--muted); padding: 8px 20px; font-size: 0.78rem;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: border-color .2s, color .2s;
+    }
+    .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* UTILS */
+    .hl  { color: var(--pink);   font-weight: 600; }
+    .hl2 { color: var(--cyan);   font-weight: 600; }
+    .hl3 { color: var(--yellow); font-weight: 600; }
+    .hl4 { color: var(--green);  font-weight: 600; }
+
+    @media(max-width:480px) {
+      .form-card { padding: 24px 18px; }
+      .field-row { grid-template-columns: 1fr; }
+      .big3-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Stars -->
+<div id="stars"></div>
+
+<div id="app">
+  <header>
+    <div class="logo">
+      <span class="logo-icon">🔮</span>
+      <div>
+        <div class="logo-text">Astro Oracle</div>
+        <div class="logo-sub">ur cosmic bestie</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── HOME SCREEN ── -->
+  <div class="screen" id="screen-home">
+    <div style="width:100%">
+      <div class="hero">
+        <div class="hero-orb">✨</div>
+        <h1>What do the stars say about you?</h1>
+        <p>drop ur birth deets and we'll map ur whole cosmic blueprint — daily vibes, yearly predictions, love, career, and more</p>
+      </div>
+
+      <div class="form-card">
+        <div class="form-heading">🌙 create ur cosmic profile</div>
+
+        <div class="field">
+          <label>Your Name</label>
+          <input id="f-name" type="text" placeholder="what do the stars call you?" />
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Birthday</label>
+            <input id="f-date" type="date" />
+          </div>
+          <div class="field">
+            <label>Birth Time <span class="optional">optional</span></label>
+            <input id="f-time" type="time" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Place of Birth</label>
+          <input id="f-place" type="text" placeholder="city, country" />
+        </div>
+
+        <div class="field">
+          <label>Pronouns</label>
+          <select id="f-gender">
+            <option value="they">they / them</option>
+            <option value="she">she / her</option>
+            <option value="he">he / him</option>
+          </select>
+        </div>
+
+        <button class="cta-btn" onclick="generate()">✨ reveal my cosmic blueprint</button>
+        <div class="form-footer">🔒 everything stays in ur browser — no data is saved anywhere</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESULT SCREEN ── -->
+  <div class="screen" id="screen-result">
+
+    <div class="profile-banner" id="profile-banner"></div>
+
+    <div class="tabs-wrap">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="tab('vibe')">🌟 Vibe Check</button>
+        <button class="tab-btn" onclick="tab('yearly')">📅 Yearly</button>
+        <button class="tab-btn" onclick="tab('monthly')">🗓 Monthly</button>
+        <button class="tab-btn" onclick="tab('daily')">☀️ Daily</button>
+        <button class="tab-btn" onclick="tab('chat')">💬 Ask Oracle</button>
+      </div>
+    </div>
+
+    <div class="panel active" id="panel-vibe"></div>
+    <div class="panel" id="panel-yearly"></div>
+    <div class="panel" id="panel-monthly"></div>
+    <div class="panel" id="panel-daily"></div>
+    <div class="panel" id="panel-chat"></div>
+
+    <div class="reset-row">
+      <button class="reset-btn" onclick="reset()">↩ start over</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  STAR BACKGROUND
+// ═══════════════════════════════════════════════════════
+(function() {
+  const wrap = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `
+      left:${Math.random()*100}%;top:${Math.random()*100}%;
+      width:${sz}px;height:${sz}px;
+      --d:${(Math.random()*4+2).toFixed(1)}s;
+      --delay:${(Math.random()*5).toFixed(1)}s;
+      --op:${(Math.random()*0.6+0.2).toFixed(2)};
+    `;
+    wrap.appendChild(s);
+  }
+})();
+
+// ═══════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════
+const SIGNS = {
+  aries:       {sym:'♈',emoji:'🐏',dates:'Mar 21–Apr 19',el:'fire', ruler:'Mars',   traits:['bold','passionate','competitive','impulsive','pioneering'],  vibe:'main character energy 24/7'},
+  taurus:      {sym:'♉',emoji:'🐂',dates:'Apr 20–May 20',el:'earth',ruler:'Venus',  traits:['loyal','stubborn','sensual','patient','reliable'],            vibe:'luxury is a personality trait'},
+  gemini:      {sym:'♊',emoji:'👯',dates:'May 21–Jun 20',el:'air',  ruler:'Mercury',traits:['witty','curious','chaotic','adaptable','communicative'],     vibe:'two moods, both valid'},
+  cancer:      {sym:'♋',emoji:'🦀',dates:'Jun 21–Jul 22',el:'water',ruler:'Moon',   traits:['nurturing','intuitive','moody','protective','empathetic'],   vibe:'soft life ambassador'},
+  leo:         {sym:'♌',emoji:'🦁',dates:'Jul 23–Aug 22',el:'fire', ruler:'Sun',    traits:['confident','generous','dramatic','charismatic','loyal'],     vibe:'born to go viral'},
+  virgo:       {sym:'♍',emoji:'🌾',dates:'Aug 23–Sep 22',el:'earth',ruler:'Mercury',traits:['analytical','detail-oriented','helpful','modest','reliable'],'vibe':'the one who fixes everything'},
+  libra:       {sym:'♎',emoji:'⚖️',dates:'Sep 23–Oct 22',el:'air',  ruler:'Venus',  traits:['charming','fair-minded','indecisive','social','artistic'],   vibe:'aesthetics > everything'},
+  scorpio:     {sym:'♏',emoji:'🦂',dates:'Oct 23–Nov 21',el:'water',ruler:'Pluto',  traits:['intense','perceptive','secretive','passionate','loyal'],     vibe:'i know ur secrets bestie'},
+  sagittarius: {sym:'♐',emoji:'🏹',dates:'Nov 22–Dec 21',el:'fire', ruler:'Jupiter',traits:['adventurous','blunt','optimistic','philosophical','free'],   vibe:'commitment issues but make it wanderlust'},
+  capricorn:   {sym:'♑',emoji:'🐐',dates:'Dec 22–Jan 19',el:'earth',ruler:'Saturn', traits:['ambitious','disciplined','patient','strategic','reserved'],  vibe:'grinding while everyone sleeps'},
+  aquarius:    {sym:'♒',emoji:'🏺',dates:'Jan 20–Feb 18',el:'air',  ruler:'Uranus', traits:['original','eccentric','humanitarian','independent','visionary'],'vibe':'NPC behavior is NOT in my DNA'},
+  pisces:      {sym:'♓',emoji:'🐟',dates:'Feb 19–Mar 20',el:'water',ruler:'Neptune',traits:['dreamy','empathetic','creative','intuitive','escapist'],    vibe:'living in a different dimension'},
+};
+const EL = {
+  fire: {color:'#f97316',label:'🔥 Fire',   desc:'ur powered by passion and hype — classic main character fuel'},
+  earth:{color:'#22c55e',label:'🌿 Earth',  desc:'ur the stable bestie everyone calls at 2am, queen behavior fr'},
+  air:  {color:'#06b6d4',label:'💨 Air',    desc:'ur brain is running 50 tabs simultaneously, no cap'},
+  water:{color:'#818cf8',label:'💧 Water',  desc:'ur intuition is literally insane and u feel EVERYTHING'},
+};
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const M_EMOJI = ['❄️','💝','🌱','🌸','☀️','🌊','🔥','🌻','🍂','👻','🦃','🎄'];
+
+const OPENERS = ['not the stars literally saying','bestie the cosmos is telling u','lowkey ur chart is screaming','no cap the universe has spoken','okay so the planets are giving','it\'s giving','real talk tho —','ur energy rn is'];
+const L_VIBES = ['soft launch incoming 💞','healing era first 💔','situationship szn 🔥','ur literally glowing up 😍','manifesting ur person 💫','someone\'s lowkey obsessed with u 👀'];
+const M_VIBES = ['bag secured 💸','budget era but make it cute 🪙','unexpected bag drop 💰','investment glow up 📈','we\'re eating good 🤑','abundance is ur birthright ✨'];
+const C_VIBES = ['ur about to eat 🚀','recognition era 👑','prove them wrong szn 😤','planting seeds rn 🌱','big idea incoming 💡','grind pays off 📊'];
+const H_VIBES = ['rest is productive bestie 🧘','movement = serotonin 🏃','ur body is begging u to sleep 😴','green flags only for ur gut 🌿','glow up szn 💪','protect ur peace 🫶'];
+const MANTRAS = [
+  'i am the main character and the universe is on budget',
+  'my energy is a privilege, not everyone gets access',
+  'i move different because i was built different',
+  'what\'s meant for me will not miss me bestie',
+  'i attract what i am, so i stay levelling up',
+  'my peace is non-negotiable and my bag is incoming',
+  'soft life is not a dream it\'s my baseline',
+  'i choose me first, every single time',
+];
+
+// ═══════════════════════════════════════════════════════
+//  SEEDED RANDOM
+// ═══════════════════════════════════════════════════════
+let seed = 0;
+function sr() { seed = (seed * 1664525 + 1013904223) & 0x7fffffff; return seed / 0x7fffffff; }
+function sc(a) { return a[Math.floor(sr()*a.length)]; }
+function si(lo,hi){ return Math.floor(sr()*(hi-lo+1))+lo; }
+
+// ═══════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════
+function getSign(d){
+  const m=d.getMonth()+1,day=d.getDate();
+  if((m===3&&day>=21)||(m===4&&day<=19))return'aries';
+  if((m===4&&day>=20)||(m===5&&day<=20))return'taurus';
+  if((m===5&&day>=21)||(m===6&&day<=20))return'gemini';
+  if((m===6&&day>=21)||(m===7&&day<=22))return'cancer';
+  if((m===7&&day>=23)||(m===8&&day<=22))return'leo';
+  if((m===8&&day>=23)||(m===9&&day<=22))return'virgo';
+  if((m===9&&day>=23)||(m===10&&day<=22))return'libra';
+  if((m===10&&day>=23)||(m===11&&day<=21))return'scorpio';
+  if((m===11&&day>=22)||(m===12&&day<=21))return'sagittarius';
+  if((m===12&&day>=22)||(m===1&&day<=19))return'capricorn';
+  if((m===1&&day>=20)||(m===2&&day<=18))return'aquarius';
+  return'pisces';
+}
+function getMoon(d){
+  const ms=(d-(new Date('2000-01-06')))/86400000;
+  return Object.keys(SIGNS)[((Math.floor((ms%29.5)/29.5*12))%12+12)%12];
+}
+function getRising(t){
+  if(!t)return null;
+  return Object.keys(SIGNS)[Math.floor(parseInt(t)/2)%12];
+}
+const cap = s => s?s[0].toUpperCase()+s.slice(1):'';
+
+let U = {};
+
+// ═══════════════════════════════════════════════════════
+//  GENERATE
+// ═══════════════════════════════════════════════════════
+function generate(){
+  const name  = document.getElementById('f-name').value.trim();
+  const dstr  = document.getElementById('f-date').value;
+  const tstr  = document.getElementById('f-time').value;
+  const place = document.getElementById('f-place').value.trim();
+  const gender= document.getElementById('f-gender').value;
+  if(!name||!dstr||!place){ alert('bestie fill in ur name, birthday & place 🌙'); return; }
+
+  seed = 0;
+  for(let c of name+dstr) seed=(seed*31+c.charCodeAt(0))|0;
+  seed=Math.abs(seed);
+
+  const dob   = new Date(dstr);
+  const sk    = getSign(dob);
+  const mk    = getMoon(dob);
+  const rk    = getRising(tstr);
+  U = {name,dstr,tstr,place,gender,sk,mk,rk,dob};
+
+  buildBanner(); buildVibe(); buildYearly(); buildMonthly(); buildDaily(); buildChat();
+  document.getElementById('screen-home').style.display='none';
+  document.getElementById('screen-result').style.display='flex';
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════════════════════════════
+//  BANNER
+// ═══════════════════════════════════════════════════════
+function buildBanner(){
+  const s=SIGNS[U.sk], el=EL[s.el];
+  let tags=`<span class="ptag ${s.el}">${el.label}</span>
+             <span class="ptag planet">🪐 ${s.ruler}</span>
+             <span class="ptag moon">🌙 Moon in ${cap(U.mk)}</span>`;
+  if(U.rk) tags+=`<span class="ptag rising">↑ ${cap(U.rk)} Rising</span>`;
+  document.getElementById('profile-banner').innerHTML=`
+    <div class="pb-emoji">${s.emoji}</div>
+    <div class="pb-name">${U.name}</div>
+    <div class="pb-sign">${cap(U.sk)} ${s.sym} · born in ${U.place}</div>
+    <div class="pb-tags">${tags}</div>
+    <div class="pb-vibe">"${s.vibe}"</div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  VIBE CHECK
+// ═══════════════════════════════════════════════════════
+function buildVibe(){
+  const s=SIGNS[U.sk], el=EL[s.el];
+  const scores={
+    'Love 💞': si(55,98), 'Career 🚀': si(50,97),
+    'Money 💸': si(45,95), 'Energy ⚡': si(60,99), 'Social 🎉': si(55,98),
+  };
+  const overall=Math.round(Object.values(scores).reduce((a,b)=>a+b)/5);
+
+  const barsHTML = Object.entries(scores).map(([l,v])=>`
+    <div class="vbar-row">
+      <div class="vbar-label">${l}</div>
+      <div class="vbar-track"><div class="vbar-fill" style="width:${v}%;background:${el.color}"></div></div>
+      <div class="vbar-pct">${v}%</div>
+    </div>`).join('');
+
+  // ring SVG
+  const r=34, circ=Math.PI*2*r, dash=circ*(overall/100);
+  const ring=`<svg width="80" height="80" viewBox="0 0 80 80">
+    <circle cx="40" cy="40" r="${r}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="7"/>
+    <circle cx="40" cy="40" r="${r}" fill="none" stroke="${el.color}" stroke-width="7"
+      stroke-dasharray="${dash} ${circ}" stroke-linecap="round"/>
+  </svg>`;
+
+  const t1=sc(s.traits), t2=sc(s.traits.filter(x=>x!==t1));
+  const traitChips=s.traits.map(t=>`<span class="trait-chip">${t}</span>`).join('');
+
+  const big3 = `
+    <div class="big3-grid">
+      <div class="big3-item">
+        <div class="big3-icon">☉</div>
+        <div class="big3-role">Sun Sign</div>
+        <div class="big3-val">${cap(U.sk)}</div>
+        <div class="big3-desc">core identity</div>
+      </div>
+      <div class="big3-item">
+        <div class="big3-icon">🌙</div>
+        <div class="big3-role">Moon Sign</div>
+        <div class="big3-val">${cap(U.mk)}</div>
+        <div class="big3-desc">emotional world</div>
+      </div>
+      <div class="big3-item" style="${U.rk?'':'opacity:0.4'}">
+        <div class="big3-icon">↑</div>
+        <div class="big3-role">Rising</div>
+        <div class="big3-val">${U.rk?cap(U.rk):'???'}</div>
+        <div class="big3-desc">${U.rk?'how u come across':'add birth time'}</div>
+      </div>
+    </div>`;
+
+  document.getElementById('panel-vibe').innerHTML=`
+    <div class="card glow">
+      <div class="card-label">✨ overall cosmic energy</div>
+      <div class="score-section">
+        <div class="score-ring-wrap">${ring}<div class="score-ring-val">${overall}<span>%</span></div></div>
+        <div>
+          <div style="font-size:0.92rem;font-weight:600;margin-bottom:4px;">${sc(OPENERS)} <span class="hl">${U.name}</span> is fully in their <span class="hl2">${t1} + ${t2}</span> era</div>
+          <div style="font-size:0.82rem;color:var(--muted);line-height:1.5;">${el.desc}</div>
+        </div>
+      </div>
+      <div style="margin-top:16px">${barsHTML}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">🔮 ur big 3</div>
+      ${big3}
+    </div>
+
+    <div class="card">
+      <div class="card-label">💅 ur core traits</div>
+      <div class="traits-wrap">${traitChips}</div>
+      <div style="margin-top:12px;font-size:0.82rem;color:var(--muted);">
+        ruled by <span class="hl">${s.ruler}</span> — that's literally why ur like this bestie 💀
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  YEARLY
+// ═══════════════════════════════════════════════════════
+function buildYearly(){
+  const s=SIGNS[U.sk], yr=new Date().getFullYear();
+  const preds=[
+    {icon:'💞',label:'Love & Situationships', text: loveY()},
+    {icon:'🚀',label:'Career & Bag',          text: careerY()},
+    {icon:'💸',label:'Money & Abundance',     text: moneyY()},
+    {icon:'🧠',label:'Mental Health & Growth',text: healthY()},
+    {icon:'🎉',label:'Social & Squad',        text: socialY()},
+  ];
+
+  const blocks=preds.map(p=>`
+    <div class="pred-block">
+      <div class="pred-block-label">${p.icon} ${p.label}</div>
+      <p>${p.text}</p>
+    </div>`).join('');
+
+  document.getElementById('panel-yearly').innerHTML=`
+    <div class="card glow">
+      <div class="card-label">🌟 ${yr} year ahead for ${U.name}</div>
+      <p style="font-size:0.88rem;color:var(--muted);margin-bottom:4px;">based on ur ${cap(U.sk)} sun, ${cap(U.mk)} moon energy</p>
+    </div>
+    ${blocks}
+    <div class="mantra-card">
+      <div class="mantra-label">🔮 ur ${yr} power mantra</div>
+      <div class="mantra-text">"${sc(MANTRAS)}"</div>
+    </div>`;
+}
+
+function loveY(){
+  return({
+    fire:`${sc(OPENERS)} ur love life is about to have a plot twist. ${sc(L_VIBES)}. stop settling for "meh" energy — ur literally worth the whole firework show no cap.`,
+    earth:`slow burn szn is REAL for u this year. ${sc(L_VIBES)}. stop rushing the timeline, ur person is levelling up rn so they can match ur energy.`,
+    air:`ur love language this year is deep convos and intellectual rizz. ${sc(L_VIBES)}. ur finally learning to communicate what u need and honestly? biggest glow up.`,
+    water:`ur heart is enormous and this year the universe is sending ppl who actually deserve it. ${sc(L_VIBES)}. stop giving ur best energy to emotionally unavailable ppl.`,
+  })[SIGNS[U.sk].el];
+}
+function careerY(){
+  return({
+    fire:`this year ur career is about to eat fr. ${sc(C_VIBES)}. ur boldness is ur biggest asset — pitch the idea, apply for the role, ask for the raise. worst they can say is no.`,
+    earth:`harvest szn is HERE. ${sc(C_VIBES)}. ur discipline is getting noticed by ppl in power and they're genuinely impressed. ur moment is coming.`,
+    air:`ur ideas are actually insane this year. ${sc(C_VIBES)}. the right conversation at the right moment changes everything — say yes to opportunities.`,
+    water:`ur intuition about ur career path is sharper than ever. ${sc(C_VIBES)}. if something feels off, it probably is. trust the gut, make the move.`,
+  })[SIGNS[U.sk].el];
+}
+function moneyY(){
+  return({
+    fire:`impulsive spending era is OVER. ${sc(M_VIBES)}. bag is coming from an unexpected direction — keep ur eyes open and ur budget app open.`,
+    earth:`ur literally the most financially grounded of the signs and this year proves it. ${sc(M_VIBES)}. one smart money decision early on pays off massively.`,
+    air:`ur big brain has a money idea that actually slaps. ${sc(M_VIBES)}. stop sleeping on ur creativity — it's a literal bag if u let it be.`,
+    water:`ur going from broke-ish to unbothered financially. ${sc(M_VIBES)}. stop lending money to ppl who never pay u back — that's ur bag they're spending bestie.`,
+  })[SIGNS[U.sk].el];
+}
+function healthY(){
+  return({
+    fire:`u burn bright but u also burn OUT. ${sc(H_VIBES)}. this year is about sustainable energy — rest is not laziness, it's ur actual superpower.`,
+    earth:`ur body is a temple and this year u finally treat it like one. ${sc(H_VIBES)}. small consistent habits > dramatic overhauls. compound effect is real.`,
+    air:`ur anxiety has been giving lately ngl. ${sc(H_VIBES)}. ur brain needs offline time — journaling, walks, literally anything that gets u out of ur head.`,
+    water:`ur so busy absorbing everyone's energy that u forget to protect ur own. ${sc(H_VIBES)}. boundaries aren't mean — they're self-preservation.`,
+  })[SIGNS[U.sk].el];
+}
+function socialY(){
+  return({
+    fire:`ur social life is POPPING this year. ur energy is magnetic and new connections coming in are actually life-changing no cap.`,
+    earth:`ur squad might get smaller and that's okay. quality > quantity always. ur learning who's actually in ur corner vs who's just around for the vibes.`,
+    air:`ur literally everyone's fave person rn and u don't even know it. ur social skills are unmatched — use them intentionally.`,
+    water:`ur finally meeting ppl who understand ur depth. ur done with surface-level friendships — this year is soul connections only.`,
+  })[SIGNS[U.sk].el];
+}
+
+// ═══════════════════════════════════════════════════════
+//  MONTHLY
+// ═══════════════════════════════════════════════════════
+let monthData=[];
+function buildMonthly(){
+  const cur=new Date().getMonth();
+  monthData = MONTHS.map((_,i)=>{
+    seed=(seed*17+i*31)|0; seed=Math.abs(seed);
+    return {
+      love:sc(L_VIBES), career:sc(C_VIBES), money:sc(M_VIBES), health:sc(H_VIBES),
+      score:si(50,99), opener:sc(OPENERS),
+    };
+  });
+
+  const tiles=MONTHS.map((m,i)=>{
+    const v=monthData[i], lbl=v.score>=80?'🔥 main char':v.score>=65?'✨ solid vibes':'🌱 growth era';
+    return `<div class="month-tile${i===cur?' active':''}" onclick="showMonth(${i})" id="mt-${i}">
+      <div class="mt-name">${m}${i===cur?' 👈':''}</div>
+      <div class="mt-emoji">${M_EMOJI[i]}</div>
+      <div class="mt-score">${lbl}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('panel-monthly').innerHTML=`
+    <div class="card">
+      <div class="card-label">📆 tap a month</div>
+      <div class="month-grid">${tiles}</div>
+    </div>
+    <div class="month-detail" id="month-detail"></div>`;
+
+  showMonth(cur);
+}
+
+function showMonth(i){
+  document.querySelectorAll('.month-tile').forEach((t,j)=>t.classList.toggle('active',j===i));
+  const v=monthData[i];
+  const score=v.score;
+  const lbl=score>=80?'ur literally eating this month 🔥':score>=65?'solid month, keep pushing ✨':'growth era — trust the process 🌱';
+  document.getElementById('month-detail').innerHTML=`
+    <div class="card glow" style="animation:none">
+      <div class="card-label">${M_EMOJI[i]} ${MONTHS[i]} for ${U.name}</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+        <div style="font-size:2.2rem;font-weight:800;color:var(--accent)">${score}%</div>
+        <div style="font-size:0.85rem;color:var(--muted);line-height:1.4;">${v.opener}<br>${lbl}</div>
+      </div>
+      <div class="pred-block" style="margin-bottom:8px;"><div class="pred-block-label">💞 love</div><p>${v.love}</p></div>
+      <div class="pred-block" style="margin-bottom:8px;"><div class="pred-block-label">🚀 career</div><p>${v.career}</p></div>
+      <div class="pred-block" style="margin-bottom:8px;"><div class="pred-block-label">💸 money</div><p>${v.money}</p></div>
+      <div class="pred-block"><div class="pred-block-label">🧘 health</div><p>${v.health}</p></div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  DAILY
+// ═══════════════════════════════════════════════════════
+function buildDaily(){
+  const today=new Date();
+  const dn=Math.floor(today/86400000);
+  seed=(seed*7+dn)|0; seed=Math.abs(seed);
+  const score=si(55,99);
+  const num=si(1,99);
+  const colors=['#ec4899','#06b6d4','#a855f7','#22c55e','#eab308','#f97316'];
+  const col=sc(colors);
+  const times=['morning ☀️','midday 🌤','golden hour 🌅','evening 🌙','night 🌃'];
+  const time=sc(times);
+  const affirmations=[
+    `today ur energy is <span class="hl">unmatched</span> and anyone who doesn't see it is an NPC`,
+    `the universe is literally routing for u today, just let it`,
+    `whatever feels heavy rn is getting lighter — the shift is happening`,
+    `ur main character era is not a phase, it's ur whole personality`,
+    `the right ppl, opportunities, and vibes are finding their way to u`,
+  ];
+  const emoji=score>=80?'🔥':score>=65?'✨':'🌱';
+
+  document.getElementById('panel-daily').innerHTML=`
+    <div class="card glow" style="text-align:center">
+      <div class="card-label">☀️ ${today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
+      <div style="font-size:3rem;margin:8px 0">${emoji}</div>
+      <div style="font-size:2.4rem;font-weight:900;color:var(--accent);line-height:1">${score}%</div>
+      <div style="font-size:0.75rem;color:var(--muted);margin:4px 0 14px">today's cosmic energy score</div>
+      <p style="font-size:0.88rem;line-height:1.65">${sc(affirmations)}</p>
+    </div>
+
+    <div class="card">
+      <div class="card-label">🍀 today's lucky stuff</div>
+      <div class="daily-stats">
+        <div class="stat-box">
+          <div class="sb-label">Lucky #</div>
+          <div class="sb-val" style="color:var(--yellow)">${num}</div>
+        </div>
+        <div class="stat-box">
+          <div class="sb-label">Lucky Time</div>
+          <div class="sb-val" style="font-size:0.9rem;color:var(--cyan);padding-top:4px">${time}</div>
+        </div>
+        <div class="stat-box">
+          <div class="sb-label">Lucky Color</div>
+          <div class="sb-val" style="font-size:0.9rem"><span style="display:inline-block;width:22px;height:22px;border-radius:50%;background:${col};vertical-align:middle;margin-right:4px"></span></div>
+          <div class="sb-sub" style="color:${col}">${col}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pred-block"><div class="pred-block-label">💞 love today</div><p>${sc(L_VIBES)} — ${sc(['send the text','don\'t force it','ur energy speaks for itself','let ppl come to u'])} bestie</p></div>
+    <div class="pred-block"><div class="pred-block-label">🚀 career today</div><p>${sc(C_VIBES)} — pick one thing and do it ridiculously well</p></div>
+    <div class="pred-block"><div class="pred-block-label">💸 money today</div><p>${sc(M_VIBES)} — check ur bank app, knowledge is power</p></div>
+    <div class="pred-block"><div class="pred-block-label">🧘 energy today</div><p>${sc(H_VIBES)} — hydrate + move ur body, it's free serotonin</p></div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  CHAT
+// ═══════════════════════════════════════════════════════
+function buildChat(){
+  document.getElementById('panel-chat').innerHTML=`
+    <div class="card chat-wrap">
+      <div class="card-label">💬 ask ur oracle anything</div>
+      <div class="quick-chips">
+        <button class="chip" onclick="cq('what should i do today?')">what should i do today?</button>
+        <button class="chip" onclick="cq('am i in my villain era?')">villain era check?</button>
+        <button class="chip" onclick="cq('tell me about my love life')">love life 💞</button>
+        <button class="chip" onclick="cq('what\'s my biggest strength?')">my superpower?</button>
+        <button class="chip" onclick="cq('mercury retrograde advice')">mercury retro ☿</button>
+        <button class="chip" onclick="cq('who am i compatible with?')">compatibility 💞</button>
+      </div>
+      <div id="chat-log">
+        <div class="cmsg bot">
+          <div class="cmsg-av">🔮</div>
+          <div class="cmsg-bubble">hey ${U.name} ✨ ur oracle is online. ask me anything about ur ${cap(U.sk)} energy — love, career, vibes, whatever. no gatekeeping here bestie 💜</div>
+        </div>
+      </div>
+      <div class="chat-input-row">
+        <input id="c-inp" type="text" placeholder="ask the oracle anything…" onkeydown="if(event.key==='Enter')cs()" />
+        <button class="send-btn" onclick="cs()">➤</button>
+      </div>
+    </div>`;
+}
+
+function cq(t){ document.getElementById('c-inp').value=t; cs(); }
+
+function cs(){
+  const inp=document.getElementById('c-inp');
+  const txt=inp.value.trim(); if(!txt)return;
+  addMsg('user',txt); inp.value='';
+  const log=document.getElementById('chat-log');
+  const td=document.createElement('div'); td.className='cmsg bot'; td.id='td';
+  td.innerHTML=`<div class="cmsg-av">🔮</div><div class="cmsg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  log.appendChild(td); log.scrollTop=log.scrollHeight;
+  setTimeout(()=>{ document.getElementById('td')?.remove(); addMsg('bot',reply(txt)); },650+Math.random()*450);
+}
+
+function addMsg(role,html){
+  const log=document.getElementById('chat-log');
+  const d=document.createElement('div'); d.className=`cmsg ${role}`;
+  d.innerHTML=`<div class="cmsg-av">${role==='bot'?'🔮':'👤'}</div><div class="cmsg-bubble">${html}</div>`;
+  log.appendChild(d); log.scrollTop=log.scrollHeight;
+}
+
+function reply(txt){
+  const t=txt.toLowerCase(), s=SIGNS[U.sk], name=U.name, sk=U.sk;
+  if(/villain|dark|bad/.test(t)) return `ok bestie real talk — ${name} ur not in ur villain era, ur in ur <span class="hl">boundaries era</span>. ${cap(sk)} energy is just misunderstood when ur done being a pushover. ur literally choosing urself 💅`;
+  if(/superpower|strength|good at|special/.test(t)) return `ur ${cap(sk)} superpower is <span class="hl">${sc(s.traits)}</span> and ur lowkey sleeping on it. ppl WISH they had ur ${sc(s.traits)} energy, no cap. lean in.`;
+  if(/weak|flaw|bad|worst/.test(t)) return `okay so ${cap(sk)}s can be a lil <span class="hl">${sc(['extra','intense','avoidant','chaotic','stubborn','overthinking'])}</span> sometimes — but that's just the shadow side of ur biggest strength so it's literally fine bestie`;
+  if(/love|crush|dating|relationship|situationship/.test(t)) return `ur love life as a ${cap(sk)}? ${sc(L_VIBES)} 💞 ${s.el==='fire'?'ur passion is ur biggest rizz but slow down a lil':s.el==='earth'?'ur loyalty is unmatched, stop wasting it':s.el==='air'?'ur charm is insane, make sure the connection has depth':'ur emotional intelligence is ur love superpower fr'}. communicate MORE, assume LESS.`;
+  if(/career|job|work|money|bag|cash/.test(t)) return `${cap(sk)} in career mode is <span class="hl2">dangerous (in the best way)</span>. ${sc(C_VIBES)} 🚀 ur ${sc(s.traits)} energy is literally ur competitive advantage — stop dimming it.`;
+  if(/today|should i|advice|help|what do/.test(t)) return `oracle says: <span class="hl">${sc(['do the scary thing','rest before u crash','say yes to the unexpected invite','trust that gut feeling u\'ve been ignoring','reach out to that person u\'ve been thinking about','finish one thing before starting new ones'])}</span>. ur ${cap(sk)} energy is aligned with action rn.`;
+  if(/mercury|retrograde/.test(t)) return `mercury retro as a ${cap(sk)}: exes WILL appear, texts WILL misfire, plans WILL flop. ur game plan: <span class="hl">over-communicate</span>, back ur stuff up, don't sign anything major. DO use this time to revisit unfinished work — it actually slaps for reviews and revisions.`;
+  if(/moon/.test(t)) return `ur moon in <span class="hl">${cap(U.mk)}</span> means ur inner emotional world is giving ${SIGNS[U.mk].vibe}. on the outside ur a ${cap(sk)} but inside? full ${cap(U.mk)} behavior when no one's watching 👀`;
+  if(/rising|ascendant/.test(t)) return U.rk?`ur ${cap(U.rk)} rising is ur first-impression filter. ppl meet u and think ${SIGNS[U.rk].vibe} before they even get to ur actual ${cap(sk)} self. ur a plot twist bestie 🎭`:`add ur birth time to unlock ur rising sign! it's the vibe u project before ppl actually know u 👀`;
+  if(/compat|match|who.*sign|sign.*who/.test(t)) return `${cap(sk)}s vibe best with signs that ${s.el==='fire'?'fan ur flames — air signs especially (Gemini, Libra, Aquarius)':s.el==='earth'?'nourish u — water signs fr (Cancer, Scorpio, Pisces)':s.el==='air'?'give u energy to work with — fire signs (Aries, Leo, Sag)':'give u stability — earth signs (Taurus, Virgo, Cap)'}. but any sign can work with communication and shared values.`;
+  if(/hi|hello|hey|sup|yo/.test(t)) return `hey ${name}! 👋 oracle fully online. what's on ur mind?`;
+  return sc([
+    `the stars are cryptic on that one 🌙 try asking about love, career, ur moon sign, or today's energy`,
+    `hmm let me consult the cosmos… okay the answer is: trust ur gut on this one ${name}. ur ${cap(sk)} instincts are literally never wrong.`,
+    `not the oracle being stumped 😭 ask me about ur vibe, compatibility, mercury retro, or daily energy and i'll spill everything`,
+  ]);
+}
+
+// ═══════════════════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════════════════
+function tab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelector(`[onclick="tab('${name}')"]`).classList.add('active');
+  document.getElementById(`panel-${name}`).classList.add('active');
+}
+
+function reset(){
+  document.getElementById('screen-home').style.display='flex';
+  document.getElementById('screen-result').style.display='none';
+  ['f-name','f-date','f-time','f-place'].forEach(id=>document.getElementById(id).value='');
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('active',i===0));
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
